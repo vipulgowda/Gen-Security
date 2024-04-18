@@ -66,6 +66,7 @@ vectorstore = Chroma(
 )
 
 print("Please wait. This might take few minutes to load")
+print(f'While you wait, you can explore the questions you want to ask from {url}')
 
 def load_docs(docs):
     """
