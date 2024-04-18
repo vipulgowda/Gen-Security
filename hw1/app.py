@@ -125,6 +125,8 @@ for doc_metadata in retriever.vectorstore.get()['metadatas']:
 for doc in document_data_sources:
     print(f"  {doc}")
 
+print("Press Enter to Exit")
+
 while True:
     line = input("llm>> ")
     if line:
