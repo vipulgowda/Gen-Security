@@ -7,7 +7,7 @@ from langchain_google_genai import GoogleGenerativeAI, GoogleGenerativeAIEmbeddi
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
-
+from langchain.prompts import ChatPromptTemplate
 
 # Define available options as a dictionary
 options = {
@@ -28,7 +28,7 @@ options = {
     "15": { "link":"hiring/" ,"title": "Hiring" },
     "16": { "link":"business-technology/data-team/" ,"title":"Data Team" },
     "17": { "link":"leadership/" ,"title": "Leadership"},
-    "18": { "link":"developer-relations/technical-marketing/" ,"title": "Technical Marketing"},
+    "18": { "link":"marketing/developer-relations/technical-marketing/" ,"title": "Technical Marketing"},
     "19": { "link":"marketing/project-management-guidelines/" ,"title": "Marketing Project Guidelines" },
     "20": { "link":"exit" ,"title": "Exit"}
 }
@@ -109,9 +109,32 @@ def format_docs(docs):
     formatted_text =  "\n\n".join(doc.page_content for doc in docs)
     return formatted_text
 
-rag_chain = (
-    {"context": retriever | format_docs, "question": RunnablePassthrough()}
-    | prompt
+
+# HyDE document generation
+template = """Please write a passage to answer the question
+Question: {question}
+Passage:"""
+prompt_hyde = ChatPromptTemplate.from_template(template)
+
+generate_docs_for_retrieval = (
+    prompt_hyde | llm | StrOutputParser() 
+)
+
+# Retrieve
+retrieval_chain = generate_docs_for_retrieval | retriever 
+
+
+template = """I am New Graduate who joined Gitlab recently. Help me explain the solution step by step. Answer the following question based on this context. If you don't know the answer, just say that you don't know.
+
+{context}
+
+Question: {question}
+"""
+
+prompt = ChatPromptTemplate.from_template(template)
+
+final_rag_chain = (
+    prompt
     | llm
     | StrOutputParser()
 )
@@ -130,7 +153,8 @@ print("Press Enter to Exit")
 while True:
     line = input("llm>> ")
     if line:
-        result = rag_chain.invoke(line)
+        retireved_docs = retrieval_chain.invoke({"question":line})
+        result = final_rag_chain.invoke({"context":retireved_docs,"question":line})
         print(result)
     else:
         break
