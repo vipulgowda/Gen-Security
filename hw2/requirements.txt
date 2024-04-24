@@ -5,3 +5,4 @@ wikipedia
 langchain-experimental
 langchainhub
 e2b
+numexpr
