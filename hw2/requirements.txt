@@ -1,0 +1,7 @@
+requests
+langchain
+langchain_google_genai
+wikipedia
+langchain-experimental
+langchainhub
+e2b
