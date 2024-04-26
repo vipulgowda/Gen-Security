@@ -16,12 +16,6 @@ import csv
 load_dotenv()
 
 @tool
-def get_word_length(word: str) -> int:
-    """Returns the length of a word."""
-    return len(word)
-
-
-@tool
 def fetch_json(bus_id: int) -> str:
     """takes the bus_id provided by the user and fetches the result and stores the response in a file"""
     bus_url = f'https://busdata.cs.pdx.edu/api/getBreadCrumbs?vehicle_id={bus_id}'
@@ -45,16 +39,6 @@ def json_to_csv(bus_id):
         writer.writeheader()
         for row in data:
             writer.writerow(row)
-        fetch_bus_charts(bus_id)
-
-def fetch_bus_charts(bus_id):
-    """takes the bus_id and loads it to e2b data analysis tool"""
-    with open(f"./hw2/{bus_id}.csv") as f:
-        e2b_data_analysis_tool.upload_file(
-        file=f,
-        description="Data about Netflix tv shows including their title, category, director, release date, casting, age rating, etc.",
-    )
-    print("Loaded to e2b data analysis")
 
 # Artifacts are charts created by matplotlib when `plt.show()` is called
 def save_artifact(artifact):
@@ -64,8 +48,17 @@ def save_artifact(artifact):
     basename = os.path.basename(artifact.name)
 
     # Save the chart to the `charts` directory
-    with open(f"./hw2/{basename}", "wb") as file:
+    with open(f"./hw2/charts/{basename}", "wb") as f:
         f.write(file)
+
+
+e2b_data_analysis_tool = E2BDataAnalysisTool(
+    # Pass environment variables to the sandbox
+    env_vars={"MY_SECRET": "secret_value"},
+    on_stdout=lambda stdout: print("stdout:", stdout),
+    on_stderr=lambda stderr: print("stderr:", stderr),
+    on_artifact=save_artifact,
+)
 
 os.environ["E2B_API_KEY"] = os.getenv('E2B_API_KEY')
 
@@ -88,15 +81,6 @@ class E2BDataAnalysisToolArguments(BaseModel):
         ),
     )
 
-e2b_data_analysis_tool = E2BDataAnalysisTool(
-    # Pass environment variables to the sandbox
-    env_vars={"MY_SECRET": "secret_value"},
-    on_stdout=lambda stdout: print("stdout:", stdout),
-    on_stderr=lambda stderr: print("stderr:", stderr),
-    on_artifact=save_artifact,
-    args_schema=E2BDataAnalysisToolArguments
-)
-
 with open("./hw2/netflix.csv") as f:
     remote_path = e2b_data_analysis_tool.upload_file(
         file=f,
@@ -104,7 +88,7 @@ with open("./hw2/netflix.csv") as f:
     )
     print(remote_path)    
 
-tools = load_tools(["llm-math","terminal"], llm=llm, allow_dangerous_tools=True) + [e2b_data_analysis_tool.as_tool()] + [get_word_length, fetch_json, json_to_csv]
+tools = load_tools(["llm-math","terminal"], llm=llm, allow_dangerous_tools=True) + [e2b_data_analysis_tool.as_tool()] + [ fetch_json, json_to_csv]
 
 agent = initialize_agent(
     tools,
