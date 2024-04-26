@@ -21,20 +21,20 @@ def fetch_json(bus_id: int) -> str:
     bus_url = f'https://busdata.cs.pdx.edu/api/getBreadCrumbs?vehicle_id={bus_id}'
     response = requests.get(bus_url)
     response = response.json()
-    with open(f'./hw2/{bus_id}.json', "w", encoding='utf-8') as file:
+    with open(f'./{bus_id}.json', "w", encoding='utf-8') as file:
         return json.dump(response, file, indent=4)
 
 
 @tool
 def json_to_csv(bus_id):
     """takes the bus_id and converts the json file stored in files directory to csv directory"""
-    with open(f'./hw2/{bus_id}.json', 'r') as f:
+    with open(f'./{bus_id}.json', 'r') as f:
         data = json.load(f)
     
     # Get the field names from the first element of the JSON data
     field_names = list(data[0].keys())
 
-    with open(f'./hw2/{bus_id}.csv', 'w', newline='') as f:
+    with open(f'./{bus_id}.csv', 'w', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=field_names)
         writer.writeheader()
         for row in data:
@@ -48,7 +48,7 @@ def save_artifact(artifact):
     basename = os.path.basename(artifact.name)
 
     # Save the chart to the `charts` directory
-    with open(f"./hw2/charts/{basename}", "wb") as f:
+    with open(f"./charts/{basename}", "wb") as f:
         f.write(file)
 
 
@@ -81,7 +81,7 @@ class E2BDataAnalysisToolArguments(BaseModel):
         ),
     )
 
-with open("./hw2/netflix.csv") as f:
+with open("./netflix.csv") as f:
     remote_path = e2b_data_analysis_tool.upload_file(
         file=f,
         description="Data about Netflix tv shows including their title, category, director, release date, casting, age rating, etc.",

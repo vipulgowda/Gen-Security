@@ -4,6 +4,6 @@ langchain_google_genai
 wikipedia
 langchain-experimental
 langchainhub
-e2b
+e2b==0.14.14
 numexpr
 python-dotenv
