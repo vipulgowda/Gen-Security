@@ -70,7 +70,7 @@ def guarddog_analysis(package: str):
     # Use subprocess.run for capturing output and error messages (optional
     strCmd = "guarddog pypi scan " + package
     result = subprocess.run(strCmd.split(), check=True, capture_output=True, text=True)  # Exit script on non-zero exit code
-    pattern = r"suspicious extension at (.*?):"
+    pattern = r"at (.*?):"
     match = re.search(pattern, result.stdout)
     if match:
       # Extract the captured group (text between 'at' and ':')
