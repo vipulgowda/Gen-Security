@@ -3,3 +3,5 @@ langchain
 langchain_google_genai
 langchainhub
 guarddog
+bs4
+requests
