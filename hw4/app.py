@@ -2,16 +2,16 @@ from langchain_google_genai import GoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate
 from langchain_community.document_loaders.generic import GenericLoader
 from langchain_community.document_loaders.parsers import LanguageParser
-from langchain.agents import AgentType
-from langchain.agents import initialize_agent
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
+from langchain.agents import AgentType
+from langchain.agents import initialize_agent
 from langchain.agents import tool
+from bs4 import BeautifulSoup
 import requests
 import tarfile
 import os
 import re
-from bs4 import BeautifulSoup
 import subprocess
 
 
@@ -27,7 +27,6 @@ def download_and_extract(url, relative_path):
     url: The tuple that contains download url and the fle where the malicious link is present.
     folder: The folder where the extracted library will be stored (default: "packages").
   """
-
   # Get the filename from the URL
   filename = url.split("/")[-1]
   folder = "packages"
@@ -68,17 +67,17 @@ def guarddog_analysis(package: str):
   """
   try:
     # Use subprocess.run for capturing output and error messages (optional
-    strCmd = "guarddog pypi scan " + package
-    result = subprocess.run(strCmd.split(), check=True, capture_output=True, text=True)  # Exit script on non-zero exit code
+    guarddog_command = "guarddog pypi scan " + package
+    guarddog_output = subprocess.run(guarddog_command.split(), check=True, capture_output=True, text=True)  # Exit script on non-zero exit code
     pattern = r"at (.*?):"
-    match = re.search(pattern, result.stdout)
+    match = re.search(pattern, guarddog_output.stdout)
     if match:
       # Extract the captured group (text between 'at' and ':')
       extracted_path = match.group(1)
       extracted_text = extracted_path.split("/")
       url = f'https://pypi.org/project/{package}/#files'
       try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=60)
         response.raise_for_status()  # Raise an exception for non-2xx status codes
       except requests.exceptions.RequestException as error:
         return f"Error fetching webpage: {error}"
@@ -120,7 +119,7 @@ def check_malware_analysis(path):
             parser=LanguageParser(),
     )
     docs = loader.load()
-
+    #Prompt taken from https://arxiv.org/html/2403.12196v1#S5 : System Role Prompt of Initial Report
     prompt = PromptTemplate.from_template(
         """
         Task: As secureGPT, a python cybersecurity analyst, your task is to review code for potentially malicious behavior or sabotage. This code review is specifically for python libraries that are part of larger projects and published on public package managers such as Pypi. Review this code for supply chain security attacks, malicious behavior, and other security risks. Keep in mind the following: Analyse code for python security issues such as code injection, data leakage, insecure use of environment variables, unsafe SQL, and random number generation. Do NOT alert on minified code that is result of standard minification process.Third party library usage is not by itself suspicious behavior. Here are some guidelines that you follow. 
@@ -148,21 +147,20 @@ def check_malware_analysis(path):
         
         {text}
         """)
-    llm = GoogleGenerativeAI(model="gemini-1.5-pro-latest",temperature=0)
+    pro_llm = GoogleGenerativeAI(model="gemini-1.5-pro-latest",temperature=0)
     chain = (
       {"text": RunnablePassthrough()} 
       | prompt
-      | llm
+      | pro_llm
       | StrOutputParser()
     )
     output = "\n".join([d.page_content for d in docs])
-    result = chain.invoke(output)
-    return(result)
+    final_resport = chain.invoke(output)
+    return(final_resport)
 
 
 tools = [guarddog_analysis, download_and_extract, check_malware_analysis]
-print("This is malware analyser. Please input your package name and let the LLM analyse for any issues ")
-
+print("MalwareCheck: Package Analyzer. Please input the package name and let the Large language model analyse for any issues")
 
 agent = initialize_agent(
     tools,
@@ -177,7 +175,6 @@ while True:
         line = input("llm>> ")
         if line:
             result = agent.invoke({"input": line})
-            #asyncio.run(my_async_function(line))
         else:
             break
     except Exception as e:
