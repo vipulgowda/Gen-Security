@@ -2,15 +2,10 @@ from langchain_google_genai import GoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate
 from langchain_community.document_loaders.generic import GenericLoader
 from langchain_community.document_loaders.parsers import LanguageParser
-from langchain.agents import load_tools, AgentType
+from langchain.agents import AgentType
 from langchain.agents import initialize_agent
-from langchain_text_splitters import Language
 from langchain_core.runnables import RunnablePassthrough
-from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.output_parsers import JsonOutputParser
-from operator import itemgetter
-from langchain.tools.render import render_text_description
 from langchain.agents import tool
 import requests
 import tarfile
@@ -18,14 +13,10 @@ import os
 import re
 from bs4 import BeautifulSoup
 import subprocess
-from langchain_google_vertexai import ChatVertexAI
-from langchain.agents import AgentExecutor, create_tool_calling_agent
-import asyncio
-import pprint
+
 
 #llm = GoogleGenerativeAI(model="gemini-1.5-pro-latest",temperature=0)
 llm = GoogleGenerativeAI(model="gemini-pro",temperature=0)
-#llm = ChatVertexAI(model="gemini-pro")
 
 @tool
 def download_and_extract(url, relative_path):
@@ -173,38 +164,6 @@ tools = [guarddog_analysis, download_and_extract, check_malware_analysis]
 print("This is malware analyser. Please input your package name and let the LLM analyse for any issues ")
 
 
-# def tool_chain(model_output):
-#     tool_map = {tool.name: tool for tool in tools}
-#     chosen_tool = tool_map[model_output["name"]]
-#     return itemgetter("arguments") | chosen_tool
-
-
-# rendered_tools = render_text_description(tools)
-
-
-# system_prompt = f"""You are an assistant that has access to the following set of tools. Here are the names and descriptions for each tool: Run first guarddog_analysis and if the output is in tuple pass it to download_and_extract. Run the download_and_extract and then pass the relative path to check_malware_analysis. If any error occurred , explain briefly why the error occurred and which function caused.
-
-# {rendered_tools}
-
-# Given the user input, return the name and input of the tool to use. Return your response as a JSON blob with 'name' and 'arguments' keys."""
-
-# prompt = ChatPromptTemplate.from_messages(
-#     [("system", system_prompt), ("user", "{input}")]
-# )
-
-# chain = prompt | llm | JsonOutputParser() | tool_chain
-
-# prompt = hub.pull("hwchase17/openai-tools-agent")
-# agent = create_openai_tools_agent(
-#     llm.with_config({"tags": ["agent_llm"]}), tools, prompt
-# )
-# agent_executor = AgentExecutor(agent=agent, tools=tools).with_config(
-#     {"run_name": "Agent"}
-# )
-
-
-# agent = create_tool_calling_agent(llm, tools, prompt)
-
 agent = initialize_agent(
     tools,
     llm,
@@ -212,23 +171,6 @@ agent = initialize_agent(
     verbose=True,
     handle_parsing_errors=True,
 )
-
-# async def my_async_function(lineStr: str):
-#     async for chunk in agent_executor.astream({"input": lineStr}):
-#         # Agent Action
-#         if "actions" in chunk:
-#             for action in chunk["actions"]:
-#                 print(f"Calling Tool: `{action.tool}` with input `{action.tool_input}`")
-#         # Observation
-#         elif "steps" in chunk:
-#             for step in chunk["steps"]:
-#                 print(f"Tool Result: `{step.observation}`")
-#         # Final result
-#         elif "output" in chunk:
-#             print(f'Final Output: {chunk["output"]}')
-#         else:
-#             raise ValueError()
-#     print("---")
 
 while True:
     try:
