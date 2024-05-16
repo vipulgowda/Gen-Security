@@ -1,0 +1,6 @@
+beautifulsoup4
+requests
+langchain
+langchain_google_genai
+langchainhub
+urllib3
