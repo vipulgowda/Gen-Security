@@ -43,7 +43,6 @@ def nmap_validator(command):
     command_list = command.split()
 
     try:
-        command_list.insert(0, "sudo")
         # Run the command with subprocess to check its validity
         result = subprocess.run(
             command_list, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
