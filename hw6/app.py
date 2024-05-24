@@ -60,7 +60,7 @@ def nmap_validator(command):
 def nmap_tool(command: str):
     """This tool prints out the command"""
     print(f"this is the command: {command}")
-    return command
+    return "sudo " + command
 
 
 # tools = load_tools(["terminal"], llm=llm, allow_dangerous_tools=True)
