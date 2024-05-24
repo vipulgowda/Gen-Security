@@ -31,13 +31,13 @@ def nmap_validator(command):
     Validate the given nmap command for correct syntax and usage.
     """
     # Simplified regex pattern to allow any nmap command
-    nmap_pattern = re.compile(r'^nmap\s+.*$')
+    nmap_pattern = re.compile(r'^sudo\s+nmap\s+.*$')
 
     # Check if the command matches the basic pattern
     if not nmap_pattern.match(command):
         print("Command does not match basic nmap pattern.")
         return False
-
+    
     # Split the command into a list for subprocess call
     command_list = command.split()
 
