@@ -32,7 +32,7 @@ def nmap_validator(command):
     """
     # Define a regular expression pattern for basic nmap command validation
     nmap_pattern = re.compile(
-        r'^nmap\s+')
+        r'^(?:sudo\s+)?nmap\s+')
 
     # Check if the command matches the basic pattern
     if not nmap_pattern.match(command):
