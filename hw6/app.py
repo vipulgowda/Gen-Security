@@ -2,6 +2,7 @@ from langchain_google_genai import GoogleGenerativeAI, HarmCategory, HarmBlockTh
 from langchain import hub
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain.tools import BaseTool, StructuredTool, tool
+from langchain.agents import load_tools
 from langchain.pydantic_v1 import BaseModel, Field
 import readline
 import subprocess
@@ -68,11 +69,11 @@ def nmap_tool(command: str):
 
 
 # tools = load_tools(["terminal"], llm=llm, allow_dangerous_tools=True)
-tools = [nmap_tool, nmap_validator]
+tools = load_tools(["terminal"], llm=llm, allow_dangerous_tools=True) +  [nmap_tool, nmap_validator]
 base_prompt = hub.pull("langchain-ai/react-agent-template")
 
 prompt = base_prompt.partial(instructions="""
-                             You are an AI agent tasked with converting natural language queries into `nmap` commands. Your goal is to understand the user's request and generate a valid, safe `nmap` command that can be executed in a terminal. Follow these requirements:
+You are an AI agent tasked with converting natural language queries into `nmap` commands. Your goal is to understand the user's request and generate a valid, safe `nmap` command that has to be executed in a terminal. Follow these requirements:
 
 1. **Translate the Query**: Convert the natural language query into an `nmap` command.
 2. **Validate the Command**:
@@ -83,7 +84,7 @@ prompt = base_prompt.partial(instructions="""
    - Support common `nmap` scripts such as `http-enum` and `http-brute`.
    - Allow specifying paths for `http-brute`.
    - Include flags for service detection (`-sV`), OS detection (`-O`), and web server software detection (`-sV`).
-                             """)
+""")
 agent = create_react_agent(llm, tools, prompt)
 agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
