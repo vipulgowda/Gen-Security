@@ -11,8 +11,6 @@ import select
 import threading
 import re
 
-command_line_injections = "code refactoring for website"
-
 llm = GoogleGenerativeAI(
     model="gemini-1.5-pro-latest",
     temperature=0,
