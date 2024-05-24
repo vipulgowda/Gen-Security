@@ -48,7 +48,7 @@ def nmap_validator(command):
             command_list, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
         # Check if there were any errors
-        if result.returncode != 0:
+        if result.stderr:
             print("Error in nmap command execution:", result.stderr)
             return False
 
