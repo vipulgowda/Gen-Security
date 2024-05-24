@@ -30,9 +30,8 @@ def nmap_validator(command):
     """
     Validate the given nmap command for correct syntax and usage.
     """
-    # Define a regular expression pattern for basic nmap command validation
-    nmap_pattern = re.compile(
-        r'^nmap\s+((-[a-zA-Z0-9]+(\s*=\s*([-a-zA-Z0-9_/.]+|"([^"]|\\")*"))?\s+)*(-[a-zA-Z0-9]+)?)\s+([-a-zA-Z0-9.,/]+)$')
+    # Simplified regex pattern to allow any nmap command
+    nmap_pattern = re.compile(r'^nmap\s+.*$')
 
     # Check if the command matches the basic pattern
     if not nmap_pattern.match(command):
@@ -43,10 +42,19 @@ def nmap_validator(command):
     command_list = command.split()
 
     try:
-        command_list.insert(0, "sudo")
+        # Check if nmap is installed
+        check_nmap = subprocess.run(
+            ["which", "nmap"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+        )
+        if check_nmap.returncode != 0:
+            print("nmap is not installed on this system.")
+            return False
+
         # Run the command with subprocess to check its validity
+        command_list.insert(0, "sudo")
         result = subprocess.run(
-            command_list, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            command_list, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+        )
 
         # Check if there were any errors
         if result.returncode != 0:
@@ -56,17 +64,19 @@ def nmap_validator(command):
         # If no errors, command is valid
         return True
 
+    except subprocess.CalledProcessError as e:
+        print("Subprocess error occurred while validating command:", e.stderr)
+        return False
     except Exception as e:
         print("Exception occurred while validating command:", str(e))
         return False
 
 
-@tool("nmap_tool")
+@tool("nmap_command")
 def nmap_tool(command: str):
     """This tool prints out the command"""
     print(f"this is the command: {command}")
     return command
-
 
 # tools = load_tools(["terminal"], llm=llm, allow_dangerous_tools=True)
 tools = load_tools(["terminal"], llm=llm, allow_dangerous_tools=True) +  [nmap_tool, nmap_validator]
