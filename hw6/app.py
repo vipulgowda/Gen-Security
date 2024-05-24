@@ -72,16 +72,12 @@ base_prompt = hub.pull("langchain-ai/react-agent-template")
 
 prompt = base_prompt.partial(instructions="""
 You are an AI agent tasked with converting natural language queries into `nmap` commands. Your goal is to understand the user's request and generate a valid, safe `nmap` command that has to be executed in a terminal. Follow these requirements:
-
 1. **Translate the Query**: Convert the natural language query into an `nmap` command.
 2. **Validate the Command**:
    - Ensure the target is a valid IP address or domain name.
-   - Ensure the command does not contain any dangerous or forbidden flags such as `--script`, `-oN`, `-oX`, `--interactive`, `-oG`, `-oA`.
 3. **Command Requirements**:
    - Include appropriate `nmap` options and arguments based on the query.
    - Support common `nmap` scripts such as `http-enum` and `http-brute`.
-   - Allow specifying paths for `http-brute`.
-   - Include flags for service detection (`-sV`), OS detection (`-O`), and web server software detection (`-sV`).
 """)
 agent = create_react_agent(llm, tools, prompt)
 agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
