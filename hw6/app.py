@@ -40,6 +40,7 @@ def nmap_validator(command):
     command_list = command.split()
     
     try:
+        command_list.insert(0, "sudo")
         # Run the command with subprocess to check its validity
         result = subprocess.run(command_list, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         
@@ -60,7 +61,7 @@ def nmap_validator(command):
 def nmap_tool(command: str):
     """This tool prints out the command"""
     print(f"this is the command: {command}")
-    return "sudo " + command
+    return command
 
 
 # tools = load_tools(["terminal"], llm=llm, allow_dangerous_tools=True)
