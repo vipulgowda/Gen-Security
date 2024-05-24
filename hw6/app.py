@@ -29,7 +29,7 @@ def nmap_validator(command):
     Validate the given nmap command for correct syntax and usage.
     """
     # Define a regular expression pattern for basic nmap command validation
-    nmap_pattern = re.compile(r'^nmap\s+([-a-zA-Z0-9]+(\s*=\s*([-a-zA-Z0-9_/.]+|"([^"]|\\")*"))?\s+)*[-a-zA-Z0-9]+$')
+    nmap_pattern = re.compile(r'^nmap\s+((-[a-zA-Z0-9]+(\s*=\s*([-a-zA-Z0-9_/.]+|"([^"]|\\")*"))?\s+)*(-[a-zA-Z0-9]+)?)\s+([-a-zA-Z0-9.,/]+)$')
     
     # Check if the command matches the basic pattern
     if not nmap_pattern.match(command):
