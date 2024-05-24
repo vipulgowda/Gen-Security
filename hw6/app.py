@@ -30,8 +30,10 @@ def nmap_validator(command):
     """
     Validate the given nmap command for correct syntax and usage.
     """
-    # Simplified regex pattern to allow any nmap command
-    nmap_pattern = re.compile(r'^sudo\s+nmap\s+.*$')
+    # Define a regular expression pattern for nmap command validation with optional sudo
+    nmap_pattern = re.compile(
+        r'^(sudo\s+)?nmap\s+(\S+(\s+\S+)*)?$'
+    )
 
     # Check if the command matches the basic pattern
     if not nmap_pattern.match(command):
@@ -51,7 +53,6 @@ def nmap_validator(command):
             return False
 
         # Run the command with subprocess to check its validity
-        command_list.insert(0, "sudo")
         result = subprocess.run(
             command_list, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
         )
