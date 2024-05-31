@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <h2>Aider</h2>
+    <h3><a href="{{ url_for('sign') }}">Sign In</a> | <a href="#">Log Out</a></h3>
+    <img src="{{ picture }}" width="25" height="25" referrerpolicy="no-referrer">
+    <p>Name: {{ name }}</p>
+    <p>Email: {{ email }}</p>
+{% endblock %}
