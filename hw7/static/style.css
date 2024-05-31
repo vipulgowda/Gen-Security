@@ -1,0 +1,48 @@
+/* 
+  General styles for the web application 
+*/
+
+body {
+  font-family: "Helvetica", sans-serif;
+  font-size: 20px;
+  color: #008303;
+}
+
+a, h1, h2 {
+  color: #00008F; /* Consistent color for links and headings */
+}
+
+/* Form styles */
+form {
+  margin: 1em 0;
+  padding: 1em;
+  width: 400px;
+  border: 1px solid #ccc;
+}
+
+/* Class-specific styles */
+.heading {
+  font-weight: bold;
+}
+
+.page {
+  width: 504px;
+  margin: 0 auto;
+  padding: 1em;
+}
+
+.entry {
+  margin-bottom: 1em;
+  padding-bottom: 1em;
+  border-bottom: 1px solid #eee;
+}
+
+/* Input styles */
+input[type="text"],
+input[type="textarea"] {
+  margin: 0.5em 0;
+  padding: 0.5em;
+  width: 200px;
+  font-size: 12px;
+  color: #777;
+}
