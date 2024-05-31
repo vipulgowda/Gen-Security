@@ -1,1 +1,3 @@
-aider-chat
+flask
+requests_oauthlib
+gunicorn
