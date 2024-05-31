@@ -2,8 +2,8 @@
 
 {% block content %}
     <h2>Aider</h2>
-    <h3><a href="{{ url_for('sign') }}">Sign In</a> | <a href="#">Log Out</a></h3>
-    <img src="{{ picture }}" width="25" height="25" referrerpolicy="no-referrer">
-    <p>Name: {{ name }}</p>
-    <p>Email: {{ email }}</p>
+    <h3><a href="{{ url_for('sign') }}">Sign In</a> | <a href="{{ url_for('logout') }}">Log Out</a></h3>
+    <img src="{{ user.picture }}" width="25" height="25" referrerpolicy="no-referrer">
+    <p>Name: {{ user.name }}</p>
+    <p>Email: {{ user.email }}</p>
 {% endblock %}
