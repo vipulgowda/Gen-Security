@@ -1,0 +1,5 @@
+langchain_google_genai
+langchain-community
+grpcio
+langchain
+langchainhub
