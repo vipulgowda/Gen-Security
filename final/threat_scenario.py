@@ -3,6 +3,7 @@ import json
 import argparse
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAI, HarmCategory, HarmBlockThreshold
 from langchain.prompts.chat import ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
+from mitreattack.stix20 import MitreAttackData
 
 # Predefined incident response templates
 incident_response_templates = {
@@ -33,39 +34,42 @@ def load_threat_groups(json_file_path):
         print(f"An unexpected error occurred: {str(e)}")
         return []
 
-# Helper function to load MITRE ATT&CK data
-def load_attack_data(attack_json_file):
-    try:
-        with open(attack_json_file, 'r') as file:
-            data = json.load(file)
-            return data
-    except FileNotFoundError:
-        print(f"Error: The file '{attack_json_file}' was not found.")
-        return None
-    except json.JSONDecodeError:
-        print(f"Error: The file '{attack_json_file}' is not valid JSON.")
-        return None
-    except Exception as e:
-        print(f"An unexpected error occurred: {str(e)}")
-        return None
+# # Helper function to load MITRE ATT&CK data
+# def load_attack_data(attack_json_file):
+#     try:
+#         with open(attack_json_file, 'r') as file:
+#             data = json.load(file)
+#             return data
+#     except FileNotFoundError:
+#         print(f"Error: The file '{attack_json_file}' was not found.")
+#         return None
+#     except json.JSONDecodeError:
+#         print(f"Error: The file '{attack_json_file}' is not valid JSON.")
+#         return None
+#     except Exception as e:
+#         print(f"An unexpected error occurred: {str(e)}")
+#         return None
 
 # Function to load techniques from MITRE ATT&CK data
 def load_techniques(attack_data):
     try:
+        techniques = attack_data.get_techniques()
         techniques_list = []
-        for technique in attack_data.get('techniques', []):
-            for reference in technique.get('external_references', []):
+        for technique in techniques:
+            for reference in technique.external_references:
                 if "external_id" in reference:
                     techniques_list.append({
-                        'id': technique['id'],
-                        'Technique Name': technique['name'],
+                        'id': technique.id,
+                        'Technique Name': technique.name,
                         'External ID': reference['external_id'],
-                        'Display Name': f"{technique['name']} ({reference['external_id']})"
+                        'Display Name': f"{technique.name} ({reference['external_id']})"
                     })
-        return sorted(techniques_list, key=lambda x: x['Display Name'])
+        return techniques_list
     except Exception as e:
         print(f"Error in load_techniques: {e}")
-        return []  # Return an empty list if an error occurs
+        return []  # Return an empty list instead of an empty DataFrame
+
+
 
 # Function to get user selections from the command line
 def get_user_selections(threat_groups_file, attack_data):
@@ -125,6 +129,7 @@ def get_user_selections(threat_groups_file, attack_data):
 
     # Load techniques from the attack data
     techniques_list = load_techniques(attack_data)
+
     techniques_options = [tech['Display Name'] for tech in techniques_list]
 
     # Get the user's choice of template or manual selection
@@ -255,11 +260,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Load the attack data
-    attack_data = load_attack_data(attack_json_file)
+    attack_data = MitreAttackData("./enterprise-attack.json")
     if attack_data is None:
         print("Failed to load attack data. Exiting...")
         exit(1)
-
     # Get user selections
     selections = get_user_selections(threat_groups_file, attack_data)
 
