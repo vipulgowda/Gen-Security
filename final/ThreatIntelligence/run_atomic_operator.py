@@ -13,7 +13,7 @@ def run_atomic_tests(techniques, atomics_path):
     results = operator.run(techniques=techniques, atomics_path=atomics_path)
     print(results)
 
-def main():
+def atomic_operator():
     try:
         # Ensure ATOMICS_PATH is set in the environment
         atomics_path = os.getenv('ATOMICS_PATH')
@@ -29,6 +29,3 @@ def main():
         
     except Exception as e:
         print(f"An error occurred: {e}")
-
-if __name__ == "__main__":
-    main()

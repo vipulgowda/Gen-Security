@@ -199,12 +199,12 @@ prompt = base_prompt.partial(instructions="Answer the user's request utilizing a
 agent = create_react_agent(llm, tools, prompt)
 agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
-print("Welcome to my application. I am configured with these tools:")
+print("Welcome to my threat model application")
 for tool in agent_executor.tools:
     print(f'  Tool: {tool.name} = {tool.description}')
 
 while True:
-    line = input("Describe the application to be modelled?>> ")
+    line = input("Describe the application to be modelled? ")
     try:
         if line:
             new_prompt = threat_prompt(threat_questions(line))

@@ -112,12 +112,12 @@ prompt = base_prompt.partial(instructions="You are a helpful assistant that prov
 agent = create_react_agent(llm, tools, prompt)
 agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
-print("Welcome to my application. I am configured with these tools:")
+print("Welcome to Threat Mitigation application.")
 for tool in agent_executor.tools:
     print(f'  Tool: {tool.name} = {tool.description}')
 
 while True:
-    line = input("Describe the application to be modelled?>> ")
+    line = input("Describe the application to show the mitigation: ")
     try:
         if line:
             new_prompt = create_mitigations_prompt(threat_questions(line))

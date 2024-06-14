@@ -22,7 +22,7 @@ def load_threat_groups():
   return threat_groups
 
 # Function to get user selections from the command line
-def get_user_selections(threat_groups_file):
+def get_user_selections():
     # List of industry choices
     industries = sorted([
         'Aerospace / Defense', 'Agriculture / Food Services', 
@@ -150,7 +150,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Get user selections
-    user_selections = get_user_selections(threat_groups_file)
+    user_selections = get_user_selections()
 
     # Generate the scenario
     generate_scenario_google(user_selections)
