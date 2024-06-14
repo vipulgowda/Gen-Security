@@ -25,7 +25,7 @@ def atomic_operator():
         techniques = [tech.strip() for tech in techniques_input.split(',')]
         
         # Running the tests
-        run_atomic_tests(techniques, atomics_path)
+        return run_atomic_tests(techniques, atomics_path)
         
     except Exception as e:
         print(f"An error occurred: {e}")
