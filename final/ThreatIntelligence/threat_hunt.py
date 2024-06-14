@@ -17,8 +17,6 @@ def load_threat_groups():
     if not isinstance(threat_groups, list):
       raise ValueError("Invalid format: 'groups' should be a list.")
   
-  print(threat_groups)
-  
   return threat_groups
 
 # Function to get user selections from the command line

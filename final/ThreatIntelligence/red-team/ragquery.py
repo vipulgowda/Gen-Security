@@ -14,7 +14,7 @@ embedding_function = GoogleGenerativeAIEmbeddings(model="models/embedding-001", 
 # Open vector database
 current_directory = f"{os.path.dirname(__file__)}"
 chroma_db = os.path.join(current_directory, f"{current_directory}/.chromadb")
-print(chroma_db)
+
 persistent_client = chromadb.PersistentClient(path=chroma_db)
 db = Chroma(
     client=persistent_client,
@@ -35,7 +35,7 @@ def perform_query(retriever, chain, query):
     results = chain.invoke({'input_documents':relevant_docs, 'question':query})
     return(results['output_text'])
 
-print("Welcome to my Mitre ATT&CK Q&A application.  Type a query and I'll answer it based on the latest data. Example:\n Write a short summary about APT 28")
+print("Welcome to my Mitre ATT&CK Q&A application.  Type a query and I'll answer it based on the latest data. Example:\n List the commands used T1040 - Network Sniffing and explain all the platforms that I can run the command in. ")
 while True:
     line = input("llm>> ")
     try:

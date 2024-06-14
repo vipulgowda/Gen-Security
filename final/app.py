@@ -13,8 +13,8 @@ from langgraph.prebuilt.tool_executor import ToolExecutor
 from langgraph.prebuilt import ToolInvocation
 from langgraph.graph import END, StateGraph
 from langchain_core.agents import AgentActionMessageLog
-from ThreatIntelligence import get_user_selections, generate_scenario_google
-from ThreatModel_new import generate_threat_model_google, threat_questions
+# from ThreatIntelligence import get_user_selections, generate_scenario_google
+# from ThreatModel import generate_threat_model_google, threat_questions
 from langchain_core.tools import tool
 from langchain_core.messages import HumanMessage, SystemMessage
 import json

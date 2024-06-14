@@ -110,7 +110,7 @@ base_prompt = hub.pull("langchain-ai/react-agent-template")
 prompt = base_prompt.partial(instructions="You are a helpful assistant that provides threat mitigation strategies in Markdown format.")
 
 agent = create_react_agent(llm, tools, prompt)
-agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True,handle_parsing_errors=True)
 
 print("Welcome to Threat Mitigation application.")
 for tool in agent_executor.tools:
