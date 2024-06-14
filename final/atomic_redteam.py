@@ -1,7 +1,34 @@
+import os
 from atomic_operator import AtomicOperator
 
-operator = AtomicOperator()
+def run_atomic_tests(techniques, atomics_path):
+    """
+    Run atomic tests for given techniques.
 
+    :param techniques: List of technique IDs (e.g., ['T1040', 'T1059'])
+    :param atomics_path: Path to the atomic red team directory
+    :return: None
+    """
+    operator = AtomicOperator()
+    results = operator.run(techniques=techniques, atomics_path=atomics_path)
+    print(results)
 
-# this will run tests on your local system
-print(operator.run(techniques=['T1040'],  atomics_path="/home/vipulp/red-team/redcanaryco-atomic-red-team-ebbf68e/"))
+def main():
+    try:
+        # Ensure ATOMICS_PATH is set in the environment
+        atomics_path = os.getenv('ATOMICS_PATH')
+        if not atomics_path:
+            raise EnvironmentError("ATOMICS_PATH environment variable is not set. Please set it and rerun the script.")
+        
+        # Input for techniques
+        techniques_input = input("Enter the technique IDs separated by commas (e.g., T1040,T1059): ")
+        techniques = [tech.strip() for tech in techniques_input.split(',')]
+        
+        # Running the tests
+        run_atomic_tests(techniques, atomics_path)
+        
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+if __name__ == "__main__":
+    main()
