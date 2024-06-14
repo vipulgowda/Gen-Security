@@ -9,7 +9,7 @@ import glob
 from langchain_community.document_loaders import UnstructuredMarkdownLoader, JSONLoader
 
 current_directory = f"{os.path.dirname(__file__)}"
-documents_directory = os.path.join(current_directory, "atomics")
+documents_directory = os.getenv('ATOMICS_PATH')
 
 group_files = glob.glob(os.path.join(documents_directory, "**/*.md"), recursive=True)
 
