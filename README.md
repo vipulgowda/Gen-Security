@@ -14,3 +14,4 @@ To get your E2B API key, follow these steps:
 
 1. Create a `.env` file in your `hw2` directory.
 2. Add the following line to your `.env` file:
+# Gen-Security
